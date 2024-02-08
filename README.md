@@ -32,5 +32,12 @@ func main() {
         fmt.PrintLn(n)
         return true
     })
+
+    // to string, from string
+    var b3 bitmap.Bitmap
+    b3.Set(1)
+    b3.Set(100)
+    b3.String() // "2|68719476736"
+    b4, err := bitmap.FromString("2|68719476736")
 }
 ```

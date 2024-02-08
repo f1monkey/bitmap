@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func Benchmark_Bitmap_Set(b *testing.B) {
@@ -168,5 +167,40 @@ func Test_Bitmap_Range(t *testing.T) {
 		return true
 	})
 
-	require.Equal(t, []uint32{0, 1, 2, 1000}, items)
+	assert.Equal(t, []uint32{0, 1, 2, 1000}, items)
+}
+
+func Benchmark_Bitmap_String(b *testing.B) {
+	bm := Bitmap{0, 5, 1000}
+	for i := 0; i < b.N; i++ {
+		_ = bm.String()
+	}
+}
+
+func Test_Bitmap_String(t *testing.T) {
+	b := Bitmap{}
+	assert.Equal(t, "", b.String())
+
+	b = Bitmap{0, 5, 100}
+	assert.Equal(t, "0|5|100", b.String())
+}
+
+func Test_FromString(t *testing.T) {
+	t.Run("must return error if unable to parse the string", func(t *testing.T) {
+		_, err := FromString("qwe")
+		assert.Error(t, err)
+	})
+	t.Run("must parse the string correctly", func(t *testing.T) {
+		v, err := FromString("")
+		assert.Nil(t, err)
+		assert.Equal(t, Bitmap{}, v)
+
+		v, err = FromString("0")
+		assert.Nil(t, err)
+		assert.Equal(t, Bitmap{0}, v)
+
+		v, err = FromString("0|5")
+		assert.Nil(t, err)
+		assert.Equal(t, Bitmap{0, 5}, v)
+	})
 }
