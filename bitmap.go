@@ -1,6 +1,10 @@
 package bitmap
 
-import "math/bits"
+import (
+	"math/bits"
+	"strconv"
+	"strings"
+)
 
 type Bitmap []uint64
 
@@ -95,6 +99,36 @@ func (b *Bitmap) Range(f func(n uint32) bool) {
 			block &= block - 1
 		}
 	}
+}
+
+func (b *Bitmap) String() string {
+	var sb strings.Builder
+
+	for i := range *b {
+		sb.WriteString(strconv.FormatUint((*b)[i], 10))
+		if i != len(*b)-1 {
+			sb.WriteString("|")
+		}
+	}
+
+	return sb.String()
+}
+
+func FromString(str string) (Bitmap, error) {
+	if str == "" {
+		return Bitmap{}, nil
+	}
+
+	nums := strings.Split(str, "|")
+	result := make(Bitmap, 0, len(nums))
+	for _, num := range nums {
+		v, err := strconv.ParseUint(num, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, v)
+	}
+	return result, nil
 }
 
 func (b *Bitmap) grow(length uint32) {
