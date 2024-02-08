@@ -39,5 +39,9 @@ func main() {
     b3.Set(100)
     b3.String() // "2|68719476736"
     b4, err := bitmap.FromString("2|68719476736")
+
+    // Bitmap32 is backed by []uint32 slice
+    // Everything else is all the same
+    var b32 bitmap.Bitmap32
 }
 ```
