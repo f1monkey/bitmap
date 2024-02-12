@@ -22,6 +22,7 @@ func (b *Bitmap32) Remove(n uint32) {
 		return
 	}
 	(*b)[block] &= (0 << bit)
+	b.shrink()
 }
 
 // Xor invert n-th bit
@@ -74,6 +75,31 @@ func (b *Bitmap32) CountDiff(b2 Bitmap32) int {
 	}
 
 	return diff
+}
+
+// Or in-place OR operation with another bitmap
+func (b *Bitmap32) Or(b2 Bitmap32) {
+	b.grow(uint32(len(b2) - 1))
+	for i := 0; i < len(b2); i++ {
+		if b2[i] == 0 {
+			continue
+		}
+		(*b)[i] |= b2[i]
+	}
+}
+
+// And in-place And operation with another bitmap
+func (b *Bitmap32) And(b2 Bitmap32) {
+	for i := 0; i < len(b2) && i < len(*b); i++ {
+		if ((*b)[i]) == 0 {
+			continue
+		}
+		if b2[i] == 0 {
+			continue
+		}
+		(*b)[i] &= b2[i]
+	}
+	b.shrink()
 }
 
 // Clone create a copy of the bitmap
@@ -135,4 +161,21 @@ func (b *Bitmap32) grow(length uint32) {
 	if length+1 > uint32(len(*b)) {
 		*b = append(*b, make(Bitmap32, length+1-uint32(len(*b)))...)
 	}
+}
+
+func (b *Bitmap32) shrink() {
+	del := 0
+	for i := len(*b) - 1; i >= 0; i-- {
+		if (*b)[i] == 0 {
+			del++
+		} else {
+			break
+		}
+	}
+
+	if del == 0 {
+		return
+	}
+
+	*b = (*b)[:len(*b)-del]
 }

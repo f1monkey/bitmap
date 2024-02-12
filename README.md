@@ -33,6 +33,9 @@ func main() {
         return true
     })
 
+    b.Or(b2) // in-place OR
+    b.And(b2) // in-place AND
+
     // to string, from string
     var b3 bitmap.Bitmap
     b3.Set(1)
