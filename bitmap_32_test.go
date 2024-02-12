@@ -167,7 +167,7 @@ func Test_Bitmap32_Range(t *testing.T) {
 		return true
 	})
 
-	assert.Equal(t, []uint32{0, 1, 2, 1992, 19984}, items)
+	assert.Equal(t, []uint32{0, 1, 2, 1000}, items)
 }
 
 func Benchmark_Bitmap32_String(b *testing.B) {

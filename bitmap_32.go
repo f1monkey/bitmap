@@ -90,7 +90,7 @@ func (b *Bitmap32) Range(f func(n uint32) bool) {
 	for i, block := range *b {
 		for block != 0 {
 			tz := bits.TrailingZeros32(block)
-			bitIndex := uint32(i*64 + tz)
+			bitIndex := uint32(i*32 + tz)
 
 			if !f(bitIndex) {
 				return
