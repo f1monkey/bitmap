@@ -61,7 +61,7 @@ func Test_Bitmap_Remove(t *testing.T) {
 	b.Set(0)
 	b.Set(100)
 	b.Remove(100)
-	assert.Equal(t, Bitmap{1, 0}, b)
+	assert.Equal(t, Bitmap{1}, b)
 }
 
 func Benchmark_Bitmap_Xor(b *testing.B) {
@@ -135,6 +135,54 @@ func Test_Bitmap_CountDiff(t *testing.T) {
 
 		assert.Equal(t, 4, b1.CountDiff(b2))
 	})
+}
+
+func Test_Bitmap_Or(t *testing.T) {
+	var b1, b2 Bitmap
+	b1.Set(0)
+	b1.Set(1)
+	b1.Set(100)
+
+	b2.Set(0)
+	b2.Set(1)
+	b2.Set(2)
+	b2.Set(101)
+	b2.Set(128)
+
+	b1.Or(b2)
+
+	assert.Equal(t, Bitmap{7, 206158430208, 1}, b1)
+	assert.True(t, b1.Has(0))
+	assert.True(t, b1.Has(1))
+	assert.True(t, b1.Has(2))
+	assert.True(t, b1.Has(100))
+	assert.True(t, b1.Has(101))
+	assert.True(t, b1.Has(128))
+	assert.False(t, b2.Has(100))
+}
+
+func Test_Bitmap_And(t *testing.T) {
+	var b1, b2 Bitmap
+	b1.Set(0)
+	b1.Set(1)
+	b1.Set(100)
+
+	b2.Set(0)
+	b2.Set(1)
+	b2.Set(2)
+	b2.Set(101)
+	b2.Set(128)
+
+	b1.And(b2)
+
+	assert.Equal(t, Bitmap{3}, b1)
+	assert.True(t, b1.Has(0))
+	assert.True(t, b1.Has(1))
+	assert.False(t, b1.Has(2))
+	assert.False(t, b1.Has(100))
+	assert.False(t, b1.Has(101))
+	assert.False(t, b1.Has(128))
+	assert.True(t, b2.Has(2))
 }
 
 func Test_Bitmap_Clone(t *testing.T) {
