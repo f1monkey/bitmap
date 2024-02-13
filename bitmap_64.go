@@ -30,6 +30,7 @@ func (b *Bitmap) Xor(n uint32) {
 	block, val := n>>6, n%64
 	b.grow(block)
 	(*b)[block] ^= (1 << val)
+	b.shrink()
 }
 
 // IsEmpty check if the bitmap has any bit set to 1

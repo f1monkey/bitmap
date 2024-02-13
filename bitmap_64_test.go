@@ -76,8 +76,12 @@ func Test_Bitmap_Xor(t *testing.T) {
 		var b Bitmap
 		b.Xor(0)
 		assert.Equal(t, Bitmap{1}, b)
+		b.Xor(1)
+		assert.Equal(t, Bitmap{3}, b)
 		b.Xor(0)
-		assert.Equal(t, Bitmap{0}, b)
+		assert.Equal(t, Bitmap{2}, b)
+		b.Xor(1)
+		assert.Equal(t, Bitmap{}, b)
 	})
 }
 
