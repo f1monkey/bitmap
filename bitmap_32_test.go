@@ -76,8 +76,12 @@ func Test_Bitmap32_Xor(t *testing.T) {
 		var b Bitmap32
 		b.Xor(0)
 		assert.Equal(t, Bitmap32{1}, b)
+		b.Xor(1)
+		assert.Equal(t, Bitmap32{3}, b)
 		b.Xor(0)
-		assert.Equal(t, Bitmap32{0}, b)
+		assert.Equal(t, Bitmap32{2}, b)
+		b.Xor(1)
+		assert.Equal(t, Bitmap32{}, b)
 	})
 }
 
