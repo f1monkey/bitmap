@@ -12,7 +12,7 @@ $ go get -v github.com/f1monkey/bitmap
 
 ```go
 func main() {
-    var b bitmap.Bitmap
+    var b bitmap.Bitmap64
 
     b.IsEmpty() // true
 
@@ -37,7 +37,7 @@ func main() {
     b.And(b2) // in-place AND
 
     // to string, from string
-    var b3 bitmap.Bitmap
+    var b3 bitmap.Bitmap64
     b3.Set(1)
     b3.Set(100)
     b3.String() // "2|68719476736"
@@ -46,5 +46,13 @@ func main() {
     // Bitmap32 is backed by []uint32 slice
     // Everything else is all the same
     var b32 bitmap.Bitmap32
+
+    // Bitmap16 is backed by []uint16 slice
+    // Everything else is all the same
+    var b16 bitmap.Bitmap16
+
+    // Bitmap8 is backed by []uint8 slice
+    // Everything else is all the same
+    var b8 bitmap.Bitmap8
 }
 ```
