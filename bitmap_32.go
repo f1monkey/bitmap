@@ -21,7 +21,7 @@ func (b *Bitmap32) Remove(n uint32) {
 	if uint32(len(*b)) <= block {
 		return
 	}
-	(*b)[block] &= (0 << bit)
+	(*b)[block] &= ^(1 << bit)
 	b.shrink()
 }
 

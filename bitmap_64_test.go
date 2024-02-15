@@ -59,9 +59,14 @@ func Test_Bitmap_Remove(t *testing.T) {
 	assert.Nil(t, b)
 
 	b.Set(0)
+	b.Set(1)
 	b.Set(100)
 	b.Remove(100)
+	assert.Equal(t, Bitmap{3}, b)
+	b.Remove(1)
 	assert.Equal(t, Bitmap{1}, b)
+	b.Remove(0)
+	assert.Equal(t, Bitmap{}, b)
 }
 
 func Benchmark_Bitmap_Xor(b *testing.B) {
