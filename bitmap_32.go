@@ -92,12 +92,6 @@ func (b *Bitmap32) Or(b2 Bitmap32) {
 // And in-place And operation with another bitmap
 func (b *Bitmap32) And(b2 Bitmap32) {
 	for i := 0; i < len(b2) && i < len(*b); i++ {
-		if ((*b)[i]) == 0 {
-			continue
-		}
-		if b2[i] == 0 {
-			continue
-		}
 		(*b)[i] &= b2[i]
 	}
 	b.shrink()
