@@ -22,7 +22,6 @@ func (b *Bitmap32) Remove(n uint32) {
 		return
 	}
 	(*b)[block] &= ^(1 << bit)
-	b.shrink()
 }
 
 // Xor invert n-th bit
@@ -30,7 +29,6 @@ func (b *Bitmap32) Xor(n uint32) {
 	block, val := n>>5, n%32
 	b.grow(block)
 	(*b)[block] ^= (1 << val)
-	b.shrink()
 }
 
 // IsEmpty check if the bitmap has any bit set to 1
@@ -92,15 +90,25 @@ func (b *Bitmap32) Or(b2 Bitmap32) {
 // And in-place And operation with another bitmap
 func (b *Bitmap32) And(b2 Bitmap32) {
 	for i := 0; i < len(b2) && i < len(*b); i++ {
-		if ((*b)[i]) == 0 {
-			continue
-		}
-		if b2[i] == 0 {
-			continue
-		}
 		(*b)[i] &= b2[i]
 	}
-	b.shrink()
+}
+
+// Shrink remove zero elements at the end of the map
+func (b *Bitmap32) Shrink() {
+	shrinkedIndex := len(*b)
+	for i := len(*b) - 1; i >= 0; i-- {
+		if (*b)[i] != 0 {
+			shrinkedIndex = i + 1
+			break
+		}
+	}
+
+	if shrinkedIndex != len(*b) {
+		newSlice := make(Bitmap32, shrinkedIndex)
+		copy(newSlice, (*b)[:shrinkedIndex])
+		*b = newSlice
+	}
 }
 
 // Clone create a copy of the bitmap
@@ -162,21 +170,4 @@ func (b *Bitmap32) grow(length uint32) {
 	if length+1 > uint32(len(*b)) {
 		*b = append(*b, make(Bitmap32, length+1-uint32(len(*b)))...)
 	}
-}
-
-func (b *Bitmap32) shrink() {
-	del := 0
-	for i := len(*b) - 1; i >= 0; i-- {
-		if (*b)[i] == 0 {
-			del++
-		} else {
-			break
-		}
-	}
-
-	if del == 0 {
-		return
-	}
-
-	*b = (*b)[:len(*b)-del]
 }

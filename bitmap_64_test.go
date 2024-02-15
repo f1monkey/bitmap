@@ -62,11 +62,11 @@ func Test_Bitmap_Remove(t *testing.T) {
 	b.Set(1)
 	b.Set(100)
 	b.Remove(100)
-	assert.Equal(t, Bitmap{3}, b)
+	assert.Equal(t, Bitmap{3, 0}, b)
 	b.Remove(1)
-	assert.Equal(t, Bitmap{1}, b)
+	assert.Equal(t, Bitmap{1, 0}, b)
 	b.Remove(0)
-	assert.Equal(t, Bitmap{}, b)
+	assert.Equal(t, Bitmap{0, 0}, b)
 }
 
 func Benchmark_Bitmap_Xor(b *testing.B) {
@@ -86,7 +86,7 @@ func Test_Bitmap_Xor(t *testing.T) {
 		b.Xor(0)
 		assert.Equal(t, Bitmap{2}, b)
 		b.Xor(1)
-		assert.Equal(t, Bitmap{}, b)
+		assert.Equal(t, Bitmap{0}, b)
 	})
 }
 
@@ -184,7 +184,7 @@ func Test_Bitmap_And(t *testing.T) {
 
 	b1.And(b2)
 
-	assert.Equal(t, Bitmap{3}, b1)
+	assert.Equal(t, Bitmap{3, 0}, b1)
 	assert.True(t, b1.Has(0))
 	assert.True(t, b1.Has(1))
 	assert.False(t, b1.Has(2))
@@ -192,6 +192,15 @@ func Test_Bitmap_And(t *testing.T) {
 	assert.False(t, b1.Has(101))
 	assert.False(t, b1.Has(128))
 	assert.True(t, b2.Has(2))
+}
+
+func Test_Bitmap_Shrink(t *testing.T) {
+	var b Bitmap
+	b.Set(1)
+	b.Set(100)
+	b.Remove(100)
+	b.Shrink()
+	assert.Equal(t, Bitmap{2}, b)
 }
 
 func Test_Bitmap_Clone(t *testing.T) {
