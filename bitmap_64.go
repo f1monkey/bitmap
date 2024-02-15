@@ -159,18 +159,11 @@ func (b *Bitmap) grow(length uint32) {
 }
 
 func (b *Bitmap) shrink() {
-	del := 0
 	for i := len(*b) - 1; i >= 0; i-- {
 		if (*b)[i] == 0 {
-			del++
+			*b = (*b)[:i]
 		} else {
 			break
 		}
 	}
-
-	if del == 0 {
-		return
-	}
-
-	*b = (*b)[:len(*b)-del]
 }
