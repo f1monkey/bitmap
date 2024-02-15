@@ -22,7 +22,6 @@ func (b *Bitmap) Remove(n uint32) {
 		return
 	}
 	(*b)[block] &= ^(1 << bit)
-	b.shrink()
 }
 
 // Xor invert n-th bit
@@ -30,7 +29,6 @@ func (b *Bitmap) Xor(n uint32) {
 	block, val := n>>6, n%64
 	b.grow(block)
 	(*b)[block] ^= (1 << val)
-	b.shrink()
 }
 
 // IsEmpty check if the bitmap has any bit set to 1
@@ -94,7 +92,23 @@ func (b *Bitmap) And(b2 Bitmap) {
 	for i := 0; i < len(b2) && i < len(*b); i++ {
 		(*b)[i] &= b2[i]
 	}
-	b.shrink()
+}
+
+// Shrink remove zero elements at the end of the map
+func (b *Bitmap) Shrink() {
+	shrinkedIndex := len(*b)
+	for i := len(*b) - 1; i >= 0; i-- {
+		if (*b)[i] != 0 {
+			shrinkedIndex = i + 1
+			break
+		}
+	}
+
+	if shrinkedIndex != len(*b) {
+		newSlice := make(Bitmap, shrinkedIndex)
+		copy(newSlice, (*b)[:shrinkedIndex])
+		*b = newSlice
+	}
 }
 
 // Clone create a copy of the bitmap
@@ -155,15 +169,5 @@ func FromString(str string) (Bitmap, error) {
 func (b *Bitmap) grow(length uint32) {
 	if length+1 > uint32(len(*b)) {
 		*b = append(*b, make(Bitmap, length+1-uint32(len(*b)))...)
-	}
-}
-
-func (b *Bitmap) shrink() {
-	for i := len(*b) - 1; i >= 0; i-- {
-		if (*b)[i] == 0 {
-			*b = (*b)[:i]
-		} else {
-			break
-		}
 	}
 }
